@@ -1339,7 +1339,17 @@
       saldoEl.style.color = saldoMes >= 0 ? '#4CAF50' : '#f44336';
     }
 
+    function normalizarDados() {
+      dados.entradas = dados.entradas || [];
+      dados.saidas = dados.saidas || [];
+      dados.eventos = dados.eventos || [];
+      dados.eventos.forEach(e => {
+        e.pacientes = e.pacientes || [];
+      });
+    }
+
     function atualizarTela() {
+      normalizarDados();
       const totalEntradas = dados.entradas.reduce((a, b) => a + b.valor, 0);
       const totalSaidas = dados.saidas.reduce((a, b) => a + b.valor, 0);
       const saldo = totalEntradas - totalSaidas;
