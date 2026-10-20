@@ -988,7 +988,7 @@
           const dadosFirebase = snapshot.val();
           
           // Verificar se dados mudaram
-          if (JSON.stringify(dados) !== JSON.stringify(dadosFirebase)) {
+          if (assinatura(dados) !== assinatura(dadosFirebase)) {
             console.log('🔄 Mudanças recebidas do Firebase!');
             dados.entradas = dadosFirebase.entradas || [];
             dados.saidas = dadosFirebase.saidas || [];
@@ -1008,7 +1008,7 @@
           database.ref('dados').once('value', (snapshot) => {
             if (snapshot.exists() && !sincronizando) {
               const dadosFirebase = snapshot.val();
-              if (JSON.stringify(dados) !== JSON.stringify(dadosFirebase)) {
+              if (assinatura(dados) !== assinatura(dadosFirebase)) {
                 console.log('🔄 Sincronização periódica: atualizando...');
                 dados.entradas = dadosFirebase.entradas || [];
                 dados.saidas = dadosFirebase.saidas || [];
@@ -1337,6 +1337,14 @@
       const saldoEl = document.getElementById('mes-saldo');
       saldoEl.textContent = 'R$ ' + saldoMes.toLocaleString('pt-BR', {minimumFractionDigits: 2});
       saldoEl.style.color = saldoMes >= 0 ? '#4CAF50' : '#f44336';
+    }
+
+    function assinatura(obj) {
+      return JSON.stringify({
+        entradas: obj.entradas || [],
+        saidas: obj.saidas || [],
+        eventos: (obj.eventos || []).map(e => ({ ...e, pacientes: e.pacientes || [] }))
+      });
     }
 
     function normalizarDados() {
